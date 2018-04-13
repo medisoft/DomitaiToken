@@ -2,58 +2,25 @@ pragma solidity ^0.4.16;
 
 interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; }
 
-    contract owned {
-        address public owner;
+contract owned {
+    address public owner;
 
-        function owned() internal {
-            owner = msg.sender;
-        }
-
-        modifier onlyOwner {
-            require(msg.sender == owner);
-            _;
-        }
-
-        function transferOwnership(address newOwner) onlyOwner public {
-            owner = newOwner;
-        }
+    function owned() internal {
+        owner = msg.sender;
     }
 
-
-
-contract Console {
-    event LogUint(string, uint);
-    function log(string s , uint x) internal {
-        emit LogUint(s, x);
-    }
-    
-    event LogInt(string, int);
-    function log(string s , int x) internal {
-        emit LogInt(s, x);
-    }
-    
-    event LogBytes(string, bytes);
-    function log(string s , bytes x) internal {
-        emit LogBytes(s, x);
-    }
-    
-    event LogBytes32(string, bytes32);
-    function log(string s , bytes32 x) internal {
-        emit LogBytes32(s, x);
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
     }
 
-    event LogAddress(string, address);
-    function log(string s , address x) internal {
-       emit LogAddress(s, x);
-    }
-
-    event LogBool(string, bool);
-    function log(string s , bool x) internal {
-        emit LogBool(s, x);
+    function transferOwnership(address newOwner) onlyOwner public {
+        owner = newOwner;
     }
 }
 
-contract DOMI is owned, Console {
+
+contract DOMI is owned {
     // Public variables of the token
     string public name = 'DOMI';
     string public symbol = 'DOMI';
