@@ -241,7 +241,6 @@ contract DOMI is owned, Console {
 
     // can accept ether
     function() payable public {
-	log("Payment", true);
         //         revert(); // If enabled then don't accepts ETH
     }
 }
