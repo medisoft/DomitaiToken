@@ -229,14 +229,19 @@ contract DOMI is owned, Console {
     }
 
     // transfer balance to owner
-    function withdrawEther(uint256 amount) onlyOwner public returns (bool success) {
+    function withdrawEther(uint256 amount) onlyOwner public {
         require(msg.sender == owner);
         owner.transfer(amount);
-        return true;
+    }
+
+    function kill() onlyOwner public {
+        require(msg.sender == owner);
+	selfdestruct(owner);
     }
 
     // can accept ether
     function() payable public {
 	log("Payment", true);
+        //         revert(); // If enabled then don't accepts ETH
     }
 }
