@@ -60,9 +60,6 @@ contract DOMI is owned, Console {
     uint8 public decimals = 18;
     // 18 decimals is the strongly suggested default, avoid changing it
     uint256 public totalSupply = 50000000;
-    // address public owner;
-    uint256 public sellPrice = 1000000000000000;
-    uint256 public buyPrice =  1000000000000000;
 
     // This creates an array with all balances
     mapping (address => uint256) public balanceOf;
@@ -231,36 +228,6 @@ contract DOMI is owned, Console {
         return true;
     }
 
-/*
-    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) onlyOwner public {
-        sellPrice = newSellPrice;
-        buyPrice = newBuyPrice;
-    }
-
-    function buy() payable public returns (uint amount){
-	log("buyPrice", buyPrice);
-	require(buyPrice>0);
-        amount = msg.value / buyPrice;                    // calculates the amount
-        require(balanceOf[this] >= amount);               // checks if it has enough to sell
-        balanceOf[msg.sender] += amount;                  // adds the amount to buyer's balance
-        balanceOf[this] -= amount;                        // subtracts amount from seller's balance
-        emit Transfer(this, msg.sender, amount);               // execute an event reflecting the change
-        return amount;                                    // ends function and returns
-    }
-
-    function sell(uint amount) public returns (uint revenue){
-	log("buyPrice", buyPrice);
-	require(sellPrice>0);
-	require(sellPrice>=buyPrice);
-        require(balanceOf[msg.sender] >= amount);         // checks if the sender has enough to sell
-        balanceOf[this] += amount;                        // adds the amount to owner's balance
-        balanceOf[msg.sender] -= amount;                  // subtracts the amount from seller's balance
-        revenue = amount * sellPrice;
-        msg.sender.transfer(revenue);                     // sends ether to the seller: it's important to do this last to prevent recursion attacks
-        emit Transfer(msg.sender, this, amount);               // executes an event reflecting on the change
-        return revenue;                                   // ends function and returns
-    }
-*/
     // transfer balance to owner
     function withdrawEther(uint256 amount) onlyOwner public returns (bool success) {
         require(msg.sender == owner);
