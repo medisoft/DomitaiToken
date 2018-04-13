@@ -32,6 +32,7 @@ contract DOMI is owned {
     mapping (address => uint256) public balanceOf;
     mapping (address => uint256) public freezeOf;
     mapping (address => mapping (address => uint256)) public allowance;
+    mapping (address => uint256) public ethBalanceOf;
 
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -91,7 +92,7 @@ contract DOMI is owned {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transfer(address _to, uint256 _value) public {
+    function transfer(address _to, uint256 _value) external {
         _transfer(msg.sender, _to, _value);
     }
 
@@ -104,7 +105,7 @@ contract DOMI is owned {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success) {
         require(_value <= allowance[_from][msg.sender]);     // Check allowance
         allowance[_from][msg.sender] -= _value;
         _transfer(_from, _to, _value);
@@ -135,7 +136,7 @@ contract DOMI is owned {
      * @param _extraData some extra information to send to the approved contract
      */
     function approveAndCall(address _spender, uint256 _value, bytes _extraData)
-        public returns (bool success) {
+        external returns (bool success) {
         tokenRecipient spender = tokenRecipient(_spender);
         if (approve(_spender, _value)) {
             spender.receiveApproval(msg.sender, _value, this, _extraData);
@@ -150,7 +151,7 @@ contract DOMI is owned {
      *
      * @param _value the amount of money to burn
      */
-    function burn(uint256 _value) public returns (bool success) {
+    function burn(uint256 _value) external returns (bool success) {
         require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
@@ -166,7 +167,7 @@ contract DOMI is owned {
      * @param _from the address of the sender
      * @param _value the amount of money to burn
      */
-    function burnFrom(address _from, uint256 _value) public returns (bool success) {
+    function burnFrom(address _from, uint256 _value) external returns (bool success) {
         require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
         require(_value <= allowance[_from][msg.sender]);    // Check allowance
         balanceOf[_from] -= _value;                         // Subtract from the targeted balance
@@ -177,7 +178,7 @@ contract DOMI is owned {
     }
 
 
-    function freeze(uint256 _value) public returns (bool success) {
+    function freeze(uint256 _value) external returns (bool success) {
         require (balanceOf[msg.sender] >= _value);            // Check if the sender has enough
 	require (_value > 0); 
         balanceOf[msg.sender] -= _value;                      // Subtract from the sender
@@ -186,7 +187,7 @@ contract DOMI is owned {
         return true;
     }
 	
-    function unfreeze(uint256 _value) public returns (bool success) {
+    function unfreeze(uint256 _value) external returns (bool success) {
         require (freezeOf[msg.sender] >= _value);            // Check if the sender has enough
 	require (_value > 0); 
         freezeOf[msg.sender] -= _value;                      // Subtract from the sender
@@ -196,19 +197,21 @@ contract DOMI is owned {
     }
 
     // transfer balance to owner
-    function withdrawEther(uint256 amount) onlyOwner public {
+    function withdrawEther(uint256 amount) onlyOwner external {
         require(msg.sender == owner);
         owner.transfer(amount);
     }
 
-    function kill() onlyOwner public {
+    function kill() onlyOwner external {
         require(msg.sender == owner);
 	selfdestruct(owner);
     }
 
     // can accept ether
     event Paid(uint);
-    function() payable public {
+    function() payable external {
+	require(msg.value>0);
+	ethBalanceOf[msg.sender] += msg.value;
         //         revert(); // If enabled then don't accepts ETH
 	emit Paid(msg.value);
     }
